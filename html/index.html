@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CashBack Club</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../scripts/config/supabase.js"></script>
+
+    <link rel="stylesheet" href="../styles/style.css" />
+</head>
+
+<body>
+    <!-- NAV -->
+    <nav>
+        <div class="logo" data-page="shop">
+            Cash<span>Back</span>Club
+        </div>
+        <div class="nav-right" id="navRight">
+            <button class="nav-link" data-page="shop">Shop</button>
+            <button class="nav-link" data-require-page="dashboard">Dashboard</button>
+            <button class="nav-link" data-page="terms">T&C</button>
+            <button class="nav-btn outline" data-page="login">Login</button>
+            <button class="nav-btn" data-page="signup">Sign Up</button>
+        </div>
+    </nav>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span id="toastMsg"></span>
+    </div>
+
+    <!-- UPI MODAL -->
+    <div class="modal-overlay" id="upiModal" data-close-overlay="upi">
+        <div class="modal">
+            <button class="modal-close" data-action="close-upi">&#x2715;</button>
+            <h2>Withdraw Cashback</h2>
+            <p>Choose your payment method and amount.</p>
+            <div class="upi-options">
+                <div class="upi-opt selected" data-upi-method="gpay">
+                    <div class="upi-logo">
+                        <img src="../assets/images/payments/gpay.png" alt="GPay" />
+                    </div>
+                    <div class="upi-name">Google Pay</div>
+                </div>
+                <div class="upi-opt" data-upi-method="paytm">
+                    <div class="upi-logo">
+                        <img src="../assets/images/payments/paytm.png" alt="Paytm" />
+                    </div>
+                    <div class="upi-name">Paytm</div>
+                </div>
+                <div class="upi-opt" data-upi-method="phonepe">
+                    <div class="upi-logo">
+                        <img src="../assets/images/payments/phonepe.png" alt="PhonePe" />
+                    </div>
+                    <div class="upi-name">PhonePe</div>
+                </div>
+                <div class="upi-opt" data-upi-method="bank">
+                    <div class="upi-logo upi-logo-bank">
+                        &#127960;
+                    </div>
+                    <div class="upi-name">Bank</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">UPI ID / Account Number</label>
+                <input class="form-input" id="upiId" placeholder="yourname@upi" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount (Rs.300 min &mdash; Rs.800 max)</label>
+                <div class="amount-row">
+                    <input type="range" min="300" max="800" value="300" id="amtSlider" data-sync="manual" />
+                    <input type="number" class="amount-manual" id="amtManual" value="300" min="300" max="800" data-sync="slider" />
+                </div>
+                <div class="slider-labels">
+                    <span>Rs.300</span>
+                    <span>Rs.800</span>
+                </div>
+            </div>
+            <button class="modal-btn" data-action="submit-withdraw">
+          Confirm Withdrawal
+        </button>
+        </div>
+    </div>
+
+    <!-- PRODUCT VIEW MODAL -->
+    <div class="prod-modal-overlay" id="prodModal" data-close-overlay="product">
+        <div class="prod-modal" data-stop-close="true">
+            <button data-action="close-product-modal" class="prod-modal-close-btn">
+          &#x2715;
+        </button>
+            <div class="prod-modal-img" id="prodModalImg"></div>
+            <div id="prodModalCat" class="prod-modal-cat"></div>
+            <div id="prodModalName" class="prod-modal-name"></div>
+            <div class="prod-modal-price-row">
+                <div id="prodModalPrice" class="prod-modal-price"></div>
+                <div id="prodModalCashback" class="prod-modal-cashback"></div>
+            </div>
+            <button id="prodModalBtn" class="prod-modal-btn">
+          Buy on Amazon/Flipkart
+        </button>
+        </div>
+    </div>
+
+    <!-- COMPARE MODAL -->
+    <div class="prod-modal-overlay compare-modal-overlay" id="compareModal" data-close-overlay="compare">
+        <div class="compare-modal" data-stop-close="true">
+            <button data-action="close-compare-modal" class="prod-modal-close-btn">
+          &#x2715;
+        </button>
+            <div class="compare-modal-grid">
+                <div class="compare-visual-panel">
+                    <div class="compare-modal-img" id="compareModalImg"></div>
+                    <div class="compare-modal-copy">
+                        <div class="compare-modal-label">Price Comparison</div>
+                        <div class="compare-modal-name" id="compareModalName"></div>
+                        <div class="compare-modal-sub" id="compareModalSub"></div>
+                    </div>
+                </div>
+                <div class="compare-data-panel">
+                    <div class="compare-chart-wrap">
+                        <div class="compare-chart" id="compareChart">
+                            <div class="compare-chart-center">
+                                <div class="compare-chart-gap" id="compareGapValue"></div>
+                                <div class="compare-chart-gap-label" id="compareGapLabel"></div>
+                            </div>
+                        </div>
+                        <div class="compare-chart-legend">
+                            <div class="compare-legend-item">
+                                <span class="compare-legend-dot amazon"></span>
+                                <span>Amazon</span>
+                            </div>
+                            <div class="compare-legend-item">
+                                <span class="compare-legend-dot flipkart"></span>
+                                <span>Flipkart</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-summary-banner" id="compareSummaryBanner"></div>
+                    <div class="compare-market-list">
+                        <div class="compare-market-row amazon">
+                            <div class="compare-market-topline">
+                                <div>
+                                    <div class="compare-market-name">Amazon</div>
+                                    <div class="compare-market-note" id="compareAmazonNote"></div>
+                                </div>
+                                <div class="compare-market-price" id="compareAmazonPrice"></div>
+                            </div>
+                            <button type="button" class="compare-shop-btn amazon" id="compareAmazonBtn">Shop now</button>
+                        </div>
+                        <div class="compare-market-row flipkart">
+                            <div class="compare-market-topline">
+                                <div>
+                                    <div class="compare-market-name">Flipkart</div>
+                                    <div class="compare-market-note" id="compareFlipkartNote"></div>
+                                </div>
+                                <div class="compare-market-price" id="compareFlipkartPrice"></div>
+                            </div>
+                            <button type="button" class="compare-shop-btn flipkart" id="compareFlipkartBtn">Shop now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHOP PAGE -->
+    <div id="page-shop" class="page active">
+        <section class="hero" id="heroSection">
+            <canvas id="heroCanvas"></canvas>
+            <div class="hero-content">
+                <div class="badge">
+                    <span class="badge-dot"></span> Live Cashback Deals
+                </div>
+                <h1>Shop Amazon/Flipkart<br />Earn <em>Real Cashback.</em></h1>
+                <p class="hero-sub">
+                    Click any product, buy on Amazon/Flipkart, then claim your cashback. Simple, transparent, instant.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary" data-action="scroll-products">
+              Browse Deals
+            </button>
+                    <button class="btn-outline" data-page="signup">
+              Create Free Account
+            </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-val">Rs.40,000+</div>
+                <div class="stat-label">Cashback Paid Out</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">12,000+</div>
+                <div class="stat-label">Happy Members</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">Up to 4%</div>
+                <div class="stat-label">Cashback Rate</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">How It Works</div>
+            <div class="section-sub">Four simple steps to earn cashback on anything.</div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <div class="step-icon">&#128269;</div>
+                    <h3>Find a Deal</h3>
+                    <p>Browse our curated picks. Every item shows cashback % clearly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <div class="step-icon">&#128715;</div>
+                    <h3>Buy on Amazon/Flipkart</h3>
+                    <p>Click our link and complete your purchase. Keep your Order ID.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <div class="step-icon">&#128203;</div>
+                    <h3>Claim Cashback</h3>
+                    <p>Submit your Amazon/Flipkart Order ID in your dashboard. We verify it.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">04</div>
+                    <div class="step-icon">&#128184;</div>
+                    <h3>Withdraw to UPI</h3>
+                    <p>Cashback hits your UPI or bank.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-wrap" id="productsSection">
+            <canvas id="dealsCanvas"></canvas>
+            <div class="products-inner">
+                <div class="section-title section-title-highlight">Today's Top Deals</div>
+                <div class="section-sub section-sub-center">
+                    All products above Rs.1000 earn cashback. Click any product to preview.
+                </div>
+                <div class="tabs tabs-centered">
+                    <button class="tab active" data-filter="all">All</button>
+                    <button class="tab" data-filter="tech">Tech</button>
+                    <button class="tab" data-filter="fashion">Fashion</button>
+                    <button class="tab" data-filter="home">Home</button>
+                    <button class="tab" data-filter="fitness">Fitness</button>
+                    <button class="tab" data-filter="books">Books</button>
+                    <button class="tab" data-filter="Kitchen">Kitchen</button>
+                </div>
+                <div class="products-grid" id="productsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIGNUP PAGE -->
+    <div id="page-signup" class="page">
+        <div class="auth-wrap">
+            <div class="auth-box">
+                <h2>Create Account</h2>
+                <p>Join 12,000+ members earning cashback on every Amazon/Flipkart purchase.</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input class="form-input" id="su-fname" placeholder="" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input class="form-input" id="su-lname" placeholder="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input class="form-input" id="su-email" type="email" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input class="form-input" id="su-phone" type="tel" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input class="form-input" id="su-pass" type="password" placeholder="Min 8 characters" />
+                </div>
+                <button class="form-btn" data-action="signup">Create Free Account</button>
+                <div class="auth-switch">
+                    Already have an account?
+                    <a data-page="login">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <div id="page-login" class="page">
+        <div class="auth-wrap">
+            <div class="auth-box">
+                <h2>Welcome Back</h2>
+                <p>Login to your CashBack Club account.</p>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input class="form-input" id="li-email" type="email" placeholder="" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input class="form-input" id="li-pass" type="password" placeholder="Your password" />
+                </div>
+                <button class="form-btn" data-action="login">Login</button>
+                <div class="auth-switch">
+                    No account? <a data-page="signup">Sign up free</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page">
+        <div class="dash-layout">
+            <div class="dash-sidebar">
+                <div class="dash-sidebar-title">
+                    My Account
+                </div>
+                <button class="sidebar-item active" data-dash-section="overview">&#128202; Overview</button>
+                <button class="sidebar-item" data-dash-section="cashback">&#129534; Claim Cashback</button>
+                <button class="sidebar-item" data-dash-section="history">&#128203; History</button>
+                <button class="sidebar-item" data-dash-section="profile">&#128100; Profile</button>
+                <button class="sidebar-item sidebar-item-top" data-page="shop">
+            &#128717; Browse Deals
+          </button>
+            </div>
+            <div class="dash-main">
+                <div class="dash-section active" id="dash-overview">
+                    <div class="dash-section-title">Overview</div>
+                    <div class="dash-section-sub">Your cashback summary.</div>
+                    <div class="wallet-card">
+                        <div>
+                            <div class="wallet-bal-label">Available Balance</div>
+                            <div class="wallet-bal">Rs.<span id="userBalance">348</span></div>
+                        </div>
+                        <div class="wallet-actions">
+                            <button class="w-btn primary" data-action="open-upi">Withdraw to UPI</button>
+                            <button class="w-btn outline" data-dash-section="cashback">Claim New</button>
+                        </div>
+                    </div>
+                    <div class="mini-stats">
+                        <div class="mini-stat">
+                            <div class="mini-stat-val mini-stat-accent">Rs.1,247</div>
+                            <div class="mini-stat-label">Total Earned</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-val mini-stat-gold">Rs.959</div>
+                            <div class="mini-stat-label">Pending</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-val mini-stat-blue">8</div>
+                            <div class="mini-stat-label">Total Claims</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-val mini-stat-red">Rs.500</div>
+                            <div class="mini-stat-label">Withdrawn</div>
+                        </div>
+                    </div>
+                    <div class="tx-table">
+                        <div class="tx-table-header">
+                            <span>Product</span>
+                            <span>Date</span>
+                            <span>Amount</span>
+                            <span>Status</span>
+                        </div>
+                        <div id="txTableBody"></div>
+                    </div>
+                </div>
+                <div class="dash-section" id="dash-cashback">
+                    <div class="dash-section-title">Claim Cashback</div>
+                    <div class="dash-section-sub">Submit your delivered order details for cashback verification.</div>
+
+                    <!-- Waiting period notice -->
+                    <div class="claim-notice">
+                        <div class="claim-notice-title">⏳ Important — Read Before Claiming</div>
+                        <ul class="claim-notice-list">
+                            <li>Only submit after your order is <strong class="text-main">delivered</strong> — not just placed</li>
+                            <li>Cashback is processed after a <strong class="text-main">15–30 day waiting period</strong> (return window)</li>
+                            <li>Cancelled or returned orders are <strong class="text-red">not eligible</strong></li>
+                            <li>Your screenshot must clearly show the <strong class="text-main">Order ID + Delivered status</strong></li>
+                            <li>Each Order ID can only be claimed <strong class="text-main">once</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="claim-card">
+                        <h3>Submit New Claim</h3>
+                        <p class="claim-helper-text">Fill all fields carefully. Incomplete or mismatched details will be rejected.</p>
+
+                        <div class="form-group">
+                            <label class="form-label">Product Name</label>
+                            <input class="form-input" id="claimProduct" type="text" inputmode="text" autocomplete="off" pattern="[A-Za-z\\s]+" title="Use letters only" placeholder="e.g. Boat Bluetooth Headphones" data-sanitize="claim-product" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Amazon/Flipkart Order ID</label>
+                            <input class="form-input" id="orderInput" type="text" inputmode="numeric" autocomplete="off" pattern="\\d{3}-\\d{7}-\\d{7}" maxlength="19" title="Use order ID like 402-1234567-1234567" placeholder="e.g. 402-1234567-1234567" data-sanitize="order-id" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Order Amount (Rs.)</label>
+                            <input class="form-input" id="claimAmount" type="text" inputmode="numeric" autocomplete="off" pattern="\\d+" title="Use numbers only" placeholder="e.g. 2499" data-sanitize="claim-amount" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Delivered Screenshot <span class="text-red">*</span></label>
+                            <div class="claim-upload-hint">Must show Order ID + "Delivered" status in the same screenshot from Amazon/Flipkart app/website</div>
+                            <div id="ssDropZone" data-action="open-upload" class="ss-drop-zone">
+                                <div class="ss-drop-icon">📸</div>
+                                <div class="ss-drop-text">Click to upload screenshot</div>
+                                <div class="ss-drop-subtext">JPG, PNG — max 5MB</div>
+                            </div>
+                            <input type="file" id="ssUpload" accept="image/*" class="hidden-input" data-action="preview-upload" />
+                            <div id="ssPreview" class="ss-preview">
+                                <img id="ssImg" class="ss-preview-img" />
+                                <button data-action="clear-upload" class="ss-clear-btn">✕</button>
+                            </div>
+                        </div>
+
+                        <button class="claim-btn claim-btn-full" data-action="submit-claim">Submit Claim</button>
+                    </div>
+                </div>
+                <div class="dash-section" id="dash-history">
+                    <div class="dash-section-title">Transaction History</div>
+                    <div class="dash-section-sub">All your cashback claims and withdrawals.</div>
+                    <div class="tx-table">
+                        <div class="tx-table-header">
+                            <span>Product</span>
+                            <span>Date</span>
+                            <span>Amount</span>
+                            <span>Status</span>
+                        </div>
+                        <div id="historyBody"></div>
+                    </div>
+                </div>
+                <div class="dash-section" id="dash-profile">
+                    <div class="dash-section-title">My Profile</div>
+                    <div class="dash-section-sub">Your account details.</div>
+                    <div class="profile-card">
+                        <div class="profile-avatar" id="profileAvatar">G</div>
+                        <div class="profile-name" id="profileName">Gurjot Singh</div>
+                        <div class="profile-email" id="profileEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="701705021a1f0430171d11191c5e131f1d">[email&#160;protected]</a></div>
+                        <button class="logout-btn" data-action="logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="page-admin" class="page">
+        <div class="admin-wrap">
+            <div class="admin-sidebar">
+                <div class="admin-badge">ADMIN</div>
+                <div class="admin-panel-title">Control Panel</div>
+                <button class="sidebar-item active" data-admin-section="overview">&#128202; Overview</button>
+                <button class="sidebar-item" data-admin-section="claims">&#129534; Claims</button>
+                <button class="sidebar-item" data-admin-section="withdrawals">&#128184; Withdrawals</button>
+                <button class="sidebar-item" data-admin-section="users">&#128101; Users</button>
+                <button class="sidebar-item admin-logout-btn" data-action="logout">&#128682; Logout</button>
+            </div>
+            <div class="admin-main">
+                <div class="admin-section active" id="admin-overview">
+                    <div class="dash-section-title">Admin Overview</div>
+                    <div class="dash-section-sub">Platform stats and pending actions.</div>
+                    <div class="admin-stats">
+                        <div class="admin-stat">
+                            <div class="admin-stat-val text-accent">Rs.40,000</div>
+                            <div class="admin-stat-label">Total Paid Out</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-val text-gold">3</div>
+                            <div class="admin-stat-label">Pending Claims</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-val text-blue">12,043</div>
+                            <div class="admin-stat-label">Total Users</div>
+                        </div>
+                        <div class="admin-stat">
+                            <div class="admin-stat-val text-red">2</div>
+                            <div class="admin-stat-label">Pending Withdrawals</div>
+                        </div>
+                    </div>
+                    <div class="admin-pending-title">
+                        Pending Claims
+                    </div>
+                    <div class="admin-table" id="adminOverviewClaims"></div>
+                </div>
+                <div class="admin-section" id="admin-claims">
+                    <div class="dash-section-title">All Claims</div>
+                    <div class="dash-section-sub">Review and approve or reject cashback claims.</div>
+                    <div class="admin-table">
+                        <div id="allClaimsBody"></div>
+                    </div>
+                </div>
+                <div class="admin-section" id="admin-withdrawals">
+                    <div class="dash-section-title">Withdrawal Requests</div>
+                    <div class="dash-section-sub">Approve UPI payout requests.</div>
+                    <div class="admin-table">
+                        <div id="withdrawBody"></div>
+                    </div>
+                </div>
+                <div class="admin-section" id="admin-users">
+                    <div class="dash-section-title">All Users</div>
+                    <div class="dash-section-sub">Manage registered members.</div>
+                    <div class="admin-table">
+                        <div id="usersBody"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TERMS PAGE -->
+    <div id="page-terms" class="page">
+        <div class="terms-wrap">
+            <div class="terms-main-title">Terms &amp; Conditions</div>
+            <div class="terms-main-sub">Last updated: March 2026 &nbsp;|&nbsp; CashBack Club, Ludhiana, Punjab, India</div>
+
+            <div class="terms-disclosure">
+                <strong class="text-accent">Amazon/Flipkart Affiliate Disclosure:</strong> CashBack Club is a participant in the Amazon/Flipkart Associates Programme. As an Amazon/Flipkart Associate, we earn a commission from qualifying purchases. Cashback
+                paid to users is funded entirely from this commission.
+            </div>
+
+            <div class="terms-stack">
+                <div class="terms-section">
+                    <div class="terms-section-title">1. Acceptance of Terms</div>
+                    <p>By creating an account or using CashBack Club ("we", "us", "our"), you agree to be bound by these Terms & Conditions. If you do not agree, do not use our service. These terms are governed by the laws of the Republic of India.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">2. Cashback Eligibility</div>
+                    <p>Cashback is only applicable on purchases of <strong class="text-main">Rs.1,000 or above</strong> made via our affiliate links. The cashback rate shown on each product is an estimate based on our current Amazon/Flipkart Associates commission.
+                        Actual cashback may vary. Products below Rs.1,000 are not eligible. Cashback is not a service provided by Amazon/Flipkart.in — it is funded entirely by our affiliate commission. Rates may change at any time without notice.
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">3. Claim Process &amp; Requirements</div>
+                    <p>To claim cashback, you must:</p>
+                    <ul class="terms-list">
+                        <li>Purchase through our affiliate link only</li>
+                        <li>Wait until your order is <strong class="text-main">fully delivered</strong> before submitting a claim</li>
+                        <li>Submit a screenshot showing your <strong class="text-main">Amazon/Flipkart Order ID and "Delivered" status</strong> in the same image</li>
+                        <li>Submit your claim within <strong class="text-main">7 days of delivery</strong></li>
+                        <li>Each Order ID may only be claimed once</li>
+                        <li>The name on the Amazon/Flipkart account must match the CashBack Club account</li>
+                    </ul>
+                    <p class="terms-paragraph-top">Claims with mismatched, blurry, edited, or incomplete screenshots will be rejected without appeal.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">4. Waiting Period (15–30 Days)</div>
+                    <p>All approved claims are subject to a mandatory <strong class="text-main">15–30 day waiting period</strong> before cashback is credited to your wallet. This waiting period exists because Amazon/Flipkart's return/refund window is up
+                        to 10 days. We verify that your order has not been cancelled or returned before releasing cashback. Cashback will <strong class="text-red">not be credited</strong> for any order that is cancelled, returned, or refunded during this
+                        period, even if the claim was initially approved.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">5. Cancellations &amp; Returns</div>
+                    <p>If you cancel or return an order after submitting a claim, your claim will be automatically rejected and any pending cashback will be forfeited. If cashback has already been credited to your wallet before the return is detected, we
+                        reserve the right to deduct the equivalent amount from your wallet or suspend your account.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">6. Withdrawals</div>
+                    <p>Minimum withdrawal amount is <strong class="text-main">Rs.300</strong>. Maximum single withdrawal is <strong class="text-main">Rs.800</strong>. Withdrawals are processed within <strong class="text-main">24–48 hours</strong> via UPI
+                        (Google Pay, Paytm, PhonePe) or bank transfer. We reserve the right to delay or reject withdrawals if fraud is suspected or if account verification is pending. Withdrawal requests cannot be cancelled once submitted.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">7. User Accounts</div>
+                    <p>You must be <strong class="text-main">18 years or older</strong> to use CashBack Club. Only one account per person is allowed. Creating multiple accounts to exploit cashback offers will result in permanent ban of all accounts and forfeiture
+                        of all balances. You are responsible for maintaining the security of your account credentials.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">8. Prohibited Activities</div>
+                    <p>The following are strictly prohibited and will result in immediate permanent ban and legal action where applicable:</p>
+                    <ul class="terms-list">
+                        <li>Submitting fake, edited, or fraudulent screenshots</li>
+                        <li>Submitting Order IDs that were not purchased through our links</li>
+                        <li>Creating multiple accounts</li>
+                        <li>Using bots or automated tools</li>
+                        <li>Ordering and returning products solely to abuse the cashback system</li>
+                        <li>Sharing your account or submitting claims for other people</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">9. Privacy &amp; Data</div>
+                    <p>We collect your name, email address, phone number, and UPI ID solely to operate the cashback service. We do not sell, share, or rent your personal data to any third party. All data is stored securely. By using our service, you consent
+                        to this data collection. Governed by the Information Technology Act, 2000 and the Digital Personal Data Protection Act, 2023 (India).</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">10. Limitation of Liability</div>
+                    <p>CashBack Club is not affiliated with, endorsed by, or in any way officially connected with Amazon/Flipkart.in. We are not responsible for any issues with your Amazon/Flipkart purchases, deliveries, or returns. Our maximum liability
+                        to any user is limited to the cashback amount in their wallet at any given time.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">11. Termination</div>
+                    <p>We reserve the right to suspend or permanently terminate any account at our sole discretion, with or without notice, if we believe these terms have been violated. Upon termination, all pending cashback and wallet balance may be forfeited.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">12. Changes to Terms</div>
+                    <p>We may update these Terms at any time. Changes will be posted on this page with an updated date. Continued use of CashBack Club after changes are posted constitutes your acceptance of the updated Terms.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">13. Governing Law &amp; Disputes</div>
+                    <p>These Terms are governed by the laws of India. Any disputes arising out of or relating to these Terms shall be subject to the exclusive jurisdiction of the courts in Ludhiana, Punjab, India.</p>
+                </div>
+
+                <div class="terms-section">
+                    <div class="terms-section-title">14. Contact Us</div>
+                    <p>For any questions, disputes, or support requests, contact us at: <strong class="text-accent">support@cashbackclub.in</strong> — We aim to respond within 48 hours.</p>
+                </div>
+            </div>
+
+            <div class="terms-actions">
+                <button data-page="shop" class="terms-back-btn">
+                    Back to Shop
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        CashBack Club 2025 &mdash; Powered by
+        <span class="text-accent">Amazon/Flipkart Associates</span>. Not affiliated with Amazon/Flipkart. &nbsp;|&nbsp;
+        <a data-page="terms" class="footer-link">Terms &amp; Conditions</a>
+    </footer>
+
+    <script src="../scripts/data/site-data.js"></script>
+    <script src="../scripts/app.js"></script>
+</body>
+
+</html>
