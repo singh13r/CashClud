@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="../scripts/config/supabase.js"></script>
 
-    <link rel="stylesheet" href="../styles/style.css" />
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -42,19 +42,19 @@
             <div class="upi-options">
                 <div class="upi-opt selected" data-upi-method="gpay">
                     <div class="upi-logo">
-                        <img src="../assets/images/payments/gpay.png" alt="GPay" />
+                        <img src="images/payments/gpay.png" alt="GPay">
                     </div>
                     <div class="upi-name">Google Pay</div>
                 </div>
                 <div class="upi-opt" data-upi-method="paytm">
                     <div class="upi-logo">
-                        <img src="../assets/images/payments/paytm.png" alt="Paytm" />
+                        <img src="images/payments/paytm.png" alt="Paytm" />
                     </div>
                     <div class="upi-name">Paytm</div>
                 </div>
                 <div class="upi-opt" data-upi-method="phonepe">
                     <div class="upi-logo">
-                        <img src="../assets/images/payments/phonepe.png" alt="PhonePe" />
+                        <img src="images/payments/phonepe.png" alt="PhonePe" />
                     </div>
                     <div class="upi-name">PhonePe</div>
                 </div>
@@ -243,15 +243,7 @@
                 <div class="section-sub section-sub-center">
                     All products above Rs.1000 earn cashback. Click any product to preview.
                 </div>
-                <div class="tabs tabs-centered">
-                    <button class="tab active" data-filter="all">All</button>
-                    <button class="tab" data-filter="tech">Tech</button>
-                    <button class="tab" data-filter="fashion">Fashion</button>
-                    <button class="tab" data-filter="home">Home</button>
-                    <button class="tab" data-filter="fitness">Fitness</button>
-                    <button class="tab" data-filter="books">Books</button>
-                    <button class="tab" data-filter="Kitchen">Kitchen</button>
-                </div>
+
                 <div class="products-grid" id="productsGrid"></div>
             </div>
         </div>
@@ -266,20 +258,20 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">First Name</label>
-                        <input class="form-input" id="su-fname" placeholder="" />
+                        <input class="form-input" id="su-fname" type="text" inputmode="text" autocomplete="given-name" pattern="[A-Za-z\s]{2,30}" title="Use letters only" placeholder="" data-sanitize="name" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Last Name</label>
-                        <input class="form-input" id="su-lname" placeholder="" />
+                        <input class="form-input" id="su-lname" type="text" inputmode="text" autocomplete="family-name" pattern="[A-Za-z\s]{0,30}" title="Use letters only" placeholder="" data-sanitize="name" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input class="form-input" id="su-email" type="email" placeholder="" />
+                    <input class="form-input" id="su-email" type="email" inputmode="email" autocomplete="email" placeholder="" data-sanitize="email" />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Phone</label>
-                    <input class="form-input" id="su-phone" type="tel" placeholder="" />
+                    <input class="form-input" id="su-phone" type="tel" inputmode="numeric" autocomplete="tel" pattern="[6-9][0-9]{9}" maxlength="10" title="Use a valid 10 digit Indian phone number" placeholder="" data-sanitize="phone" />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
@@ -302,7 +294,7 @@
                 <p>Login to your CashBack Club account.</p>
                 <div class="form-group">
                     <label class="form-label">Email</label>
-                    <input class="form-input" id="li-email" type="email" placeholder="" />
+                    <input class="form-input" id="li-email" type="email" inputmode="email" autocomplete="email" placeholder="" data-sanitize="email" />
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
@@ -640,8 +632,9 @@
         <a data-page="terms" class="footer-link">Terms &amp; Conditions</a>
     </footer>
 
-    <script src="../scripts/data/site-data.js"></script>
-    <script src="../scripts/app.js"></script>
+    <script src="site-data.js"></script>
+    <script src="app.js"></script>
+    <script src="supabase.js"></script>
 </body>
 
 </html>

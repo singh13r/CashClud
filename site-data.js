@@ -1,140 +1,71 @@
         // ===== DATA =====
         var PRODUCTS = [{
-            id: 1,
-            name: "boAt Rockerz 650 Pro Headphones",
-            price: "Rs.2,999",
-            cashback: "2%",
-            cat: "tech",
-            emoji: "🎧",
-            img: "../assets/images/products/boat-headphones.jpg",
-            link: "https://www.amazon.in/s?k=boat+rockerz+650+pro&tag=YOURTAG-21"
-        }, {
-            id: 2,
-            name: "Redmi Note 15 Pro+ 5G 256GB",
-            price: "Rs.26,999",
-            cashback: "5%",
-            cat: "tech",
-            emoji: "📱",
-            img: "../assets/images/products/redmi-phone.png",
-            link: "https://www.amazon.in/s?k=redmi+note+15+pro&tag=YOURTAG-21"
-        }, {
-            id: 3,
-            name: "Noise Pulse 2 Pro Smartwatch",
-            price: "Rs.2,499",
-            cashback: "2%",
-            cat: "tech",
-            emoji: "⌚",
-            img: "../assets/images/products/noise-watch.jpg",
-            link: "https://www.amazon.in/s?k=noise+pulse+2+pro&tag=YOURTAG-21"
-        }, {
-            id: 4,
-            name: "JBL Go Essential Portable Speaker",
-            price: "Rs.1,999",
-            cashback: "2%",
-            cat: "tech",
-            emoji: "🔊",
-            img: "../assets/images/products/jbl-speaker.jpg",
-            link: "https://www.amazon.in/s?k=jbl+go+essential&tag=YOURTAG-21"
-        }, {
-            id: 5,
-            name: "HP 15 13th Gen Core i3 Laptop",
-            price: "Rs.42,990",
-            cashback: "6%",
-            cat: "tech",
-            emoji: "💻",
-            img: "../assets/images/products/hp-laptop.jpg",
-            link: "https://www.amazon.in/s?k=hp+15+13th+gen+i3&tag=YOURTAG-21"
-        }, {
-            id: 6,
-            name: "GOBOULT x Mustang Torq Earbuds",
-            price: "Rs.1,499",
-            cashback: "2%",
-            cat: "tech",
-            emoji: "🎵",
-            img: "../assets/images/products/mustang-earbuds.webp",
-            link: "https://www.amazon.in/s?k=goboult+mustang+torq+earbuds&tag=YOURTAG-21"
-        }, {
-            id: 7,
-            name: "Fastrack Astor FR2 Pro Smartwatch",
-            price: "Rs.3,995",
-            cashback: "3%",
-            cat: "tech",
-            emoji: "⌚",
-            img: "../assets/images/products/fastrack-watch.jpg",
-            link: "https://www.amazon.in/s?k=fastrack+astor+fr2+pro&tag=YOURTAG-21"
-        }, {
-            id: 8,
-            name: "Levis Men Slim Fit Jeans",
-            price: "Rs.1,799",
-            cashback: "2%",
-            cat: "fashion",
-            emoji: "👖",
-            img: "",
-            link: "https://www.amazon.in/s?k=levis+jeans+men&tag=YOURTAG-21"
-        }, {
-            id: 9,
-            name: "Puma Men Sneakers",
-            price: "Rs.2,499",
-            cashback: "2%",
-            cat: "fashion",
-            emoji: "👟",
-            img: "",
-            link: "https://www.amazon.in/s?k=puma+sneakers+men&tag=YOURTAG-21"
-        }, {
-            id: 10,
-            name: "Amazon/Flipkart Echo Dot 5th Gen",
-            price: "Rs.4,499",
-            cashback: "4%",
-            cat: "home",
-            emoji: "🔮",
-            img: "../assets/images/products/echo-dot.jpg",
-            link: "https://www.amazon.in/s?k=echo+dot+5th+gen&tag=YOURTAG-21"
-        }, {
-            id: 11,
-            name: "Pigeon Healthifry Digital Air Fryer",
-            price: "Rs.2,799",
-            cashback: "2%",
-            cat: "Kitchen",
-            emoji: "🥘",
-            img: "../assets/images/products/pigeon-airfryer.jpg",
-            link: "https://www.amazon.in/s?k=pigeon+healthifry+air+fryer&tag=YOURTAG-21"
-        }, {
-            id: 12,
-            name: "Philips Air Fryer 4L",
-            price: "Rs.5,999",
-            cashback: "5%",
-            cat: "Kitchen",
-            emoji: "🍳",
-            img: "",
-            link: "https://www.amazon.in/s?k=philips+air+fryer&tag=YOURTAG-21"
-        }, {
-            id: 13,
-            name: "Havells Room Heater 2000W",
-            price: "Rs.1,999",
-            cashback: "2%",
-            cat: "home",
-            emoji: "🌡️",
-            img: "",
-            link: "https://www.amazon.in/s?k=havells+room+heater&tag=YOURTAG-21"
-        }, {
-            id: 14,
-            name: "Fitbit Inspire 3 Fitness Tracker",
-            price: "Rs.7,999",
-            cashback: "6%",
-            cat: "fitness",
-            emoji: "🏃",
-            img: "",
-            link: "https://www.amazon.in/s?k=fitbit+inspire+3&tag=YOURTAG-21"
-        }, {
-            id: 15,
-            name: "Boldfit Smart Pro Gym Set",
-            price: "Rs.1,299",
-            cashback: "2%",
-            cat: "fitness",
-            emoji: "🥊",
-            img: "",
-            link: "https://www.amazon.in/s?k=boldfit+gym+set&tag=YOURTAG-21"
-        }, ];
+                id: 1,
+                name: "boAt Rockerz 650 Pro Headphones",
+                price: "Rs.2,999",
+                cashback: "2%",
+                cat: "tech",
+                img: "images/products/boat-headphones.jpg",
+                link: "https://www.amazon.in/s?k=boat+rockerz+650+pro&tag=YOURTAG-21"
+            }, {
+                id: 2,
+                name: "Redmi Note 15 Pro+ 5G 256GB",
+                price: "Rs.26,999",
+                cashback: "5%",
+                cat: "tech",
+                img: "images/products/redmi-phone.png",
+                link: "https://www.amazon.in/s?k=redmi+note+15+pro&tag=YOURTAG-21"
+            }, {
+                id: 3,
+                name: "Noise Pulse 2 Pro Smartwatch",
+                price: "Rs.2,499",
+                cashback: "2%",
+                cat: "tech",
+                img: "images/products/noise-watch.jpg",
+                link: "https://www.amazon.in/s?k=noise+pulse+2+pro&tag=YOURTAG-21"
+            }, {
+                id: 4,
+                name: "JBL Go Essential Portable Speaker",
+                price: "Rs.1,999",
+                cashback: "2%",
+                cat: "tech",
+                img: "images/products/jbl-speaker.jpg",
+                link: "https://www.amazon.in/s?k=jbl+go+essential&tag=YOURTAG-21"
+            }, {
+                id: 5,
+                name: "HP 15 13th Gen Core i3 Laptop",
+                price: "Rs.42,990",
+                cashback: "6%",
+                cat: "tech",
+                img: "images/products/hp-laptop.jpg",
+                link: "https://www.amazon.in/s?k=hp+15+13th+gen+i3&tag=YOURTAG-21"
+            }, {
+                id: 6,
+                name: "GOBOULT x Mustang Torq Earbuds",
+                price: "Rs.1,499",
+                cashback: "2%",
+                cat: "tech",
+                img: "images/products/mustang-earbuds.webp",
+                link: "https://www.amazon.in/s?k=goboult+mustang+torq+earbuds&tag=YOURTAG-21"
+            }, {
+                id: 7,
+                name: "Fastrack Astor FR2 Pro Smartwatch",
+                price: "Rs.3,995",
+                cashback: "3%",
+                cat: "tech",
+                img: "images/products/fastrack-watch.jpg",
+                link: "https://www.amazon.in/s?k=fastrack+astor+fr2+pro&tag=YOURTAG-21"
+            },
+            {
+                id: 10,
+                name: "Amazon/Flipkart Echo Dot 5th Gen",
+                price: "Rs.4,499",
+                cashback: "4%",
+                cat: "tech",
+                img: "images/products/echo-dot.jpg",
+                link: "https://www.amazon.in/s?k=echo+dot+5th+gen&tag=YOURTAG-21"
+            },
+        ];
 
         var PRODUCT_MARKET_DATA = {
             1: {
@@ -172,46 +103,12 @@
                 flipkartPrice: "Rs.4,149",
                 flipkartLink: "https://www.flipkart.com/search?q=Fastrack+Astor+FR2+Pro+Smartwatch"
             },
-            8: {
-                amazonPrice: "Rs.1,799",
-                flipkartPrice: "Rs.1,899",
-                flipkartLink: "https://www.flipkart.com/search?q=Levis+Men+Slim+Fit+Jeans"
-            },
-            9: {
-                amazonPrice: "Rs.2,499",
-                flipkartPrice: "Rs.2,349",
-                flipkartLink: "https://www.flipkart.com/search?q=Puma+Men+Sneakers"
-            },
             10: {
                 amazonPrice: "Rs.4,499",
                 flipkartPrice: "Rs.4,799",
                 flipkartLink: "https://www.flipkart.com/search?q=Amazon/Flipkart+Echo+Dot+5th+Gen"
             },
-            11: {
-                amazonPrice: "Rs.2,799",
-                flipkartPrice: "Rs.2,999",
-                flipkartLink: "https://www.flipkart.com/search?q=Pigeon+Healthifry+Digital+Air+Fryer"
-            },
-            12: {
-                amazonPrice: "Rs.5,999",
-                flipkartPrice: "Rs.6,249",
-                flipkartLink: "https://www.flipkart.com/search?q=Philips+Air+Fryer+4L"
-            },
-            13: {
-                amazonPrice: "Rs.1,999",
-                flipkartPrice: "Rs.2,149",
-                flipkartLink: "https://www.flipkart.com/search?q=Havells+Room+Heater+2000W"
-            },
-            14: {
-                amazonPrice: "Rs.7,999",
-                flipkartPrice: "Rs.8,299",
-                flipkartLink: "https://www.flipkart.com/search?q=Fitbit+Inspire+3+Fitness+Tracker"
-            },
-            15: {
-                amazonPrice: "Rs.1,299",
-                flipkartPrice: "Rs.1,449",
-                flipkartLink: "https://www.flipkart.com/search?q=Boldfit+Smart+Pro+Gym+Set"
-            }
+
         };
 
         var txData = [{
@@ -355,6 +252,3 @@
                 approveWithdrawals: false
             }
         };
-
-
-

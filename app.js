@@ -189,18 +189,76 @@
         }
 
         // ===== AUTH =====
+        function markInvalid(el, message) {
+            if (el) {
+                el.classList.add("invalid");
+                el.focus();
+            }
+            showToast(message);
+        }
+
+        function clearInvalidAuthFields() {
+            ["su-fname", "su-lname", "su-email", "su-phone", "su-pass", "li-email", "li-pass"].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.classList.remove("invalid");
+            });
+        }
+
+        function sanitizeName(input) {
+            input.value = input.value.replace(/[^A-Za-z\s]/g, "").replace(/\s+/g, " ").slice(0, 30);
+        }
+
+        function sanitizeEmail(input) {
+            input.value = input.value.replace(/\s/g, "").slice(0, 80);
+        }
+
+        function sanitizePhone(input) {
+            input.value = input.value.replace(/\D/g, "").slice(0, 10);
+        }
+
+        function isValidName(value, required) {
+            if (!value) return !required;
+            return /^[A-Za-z][A-Za-z\s]{1,29}$/.test(value);
+        }
+
+        function isValidEmail(value) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+        }
+
+        function isValidPhone(value) {
+            return /^[6-9]\d{9}$/.test(value);
+        }
+
         async function handleSignup() {
+            clearInvalidAuthFields();
             var fn = document.getElementById("su-fname").value.trim();
             var ln = document.getElementById("su-lname").value.trim();
             var em = document.getElementById("su-email").value.trim();
             var ph = document.getElementById("su-phone").value.trim();
             var pw = document.getElementById("su-pass").value.trim();
-            if (!fn || !em || !pw) {
-                showToast("Please fill required fields!");
+            var firstNameEl = document.getElementById("su-fname");
+            var lastNameEl = document.getElementById("su-lname");
+            var emailEl = document.getElementById("su-email");
+            var phoneEl = document.getElementById("su-phone");
+            var passEl = document.getElementById("su-pass");
+            if (!isValidName(fn, true)) {
+                markInvalid(firstNameEl, "First name should contain letters only.");
                 return;
             }
-            if (pw.length < 6) {
-                showToast("Password must be at least 6 characters!");
+            if (!isValidName(ln, false)) {
+                markInvalid(lastNameEl, "Last name should contain letters only.");
+                return;
+            }
+            if (!isValidEmail(em)) {
+                markInvalid(emailEl, "Please enter a valid email address.");
+                return;
+            }
+            if (!isValidPhone(ph)) {
+                markInvalid(phoneEl, "Phone number must be a valid 10 digit Indian number.");
+                return;
+            }
+            if (pw.length < 8) {
+                markInvalid(passEl, "Password must be at least 8 characters.");
                 return;
             }
             showToast("Creating account...");
@@ -236,10 +294,17 @@
         }
 
         async function handleLogin() {
+            clearInvalidAuthFields();
             var em = document.getElementById("li-email").value.trim();
             var pw = document.getElementById("li-pass").value.trim();
-            if (!em || !pw) {
-                showToast("Enter email and password!");
+            var emailEl = document.getElementById("li-email");
+            var passEl = document.getElementById("li-pass");
+            if (!isValidEmail(em)) {
+                markInvalid(emailEl, "Please enter a valid email address.");
+                return;
+            }
+            if (!pw) {
+                markInvalid(passEl, "Enter your password.");
                 return;
             }
             var result = await supabase.auth.signInWithPassword({
@@ -370,6 +435,22 @@
             }, 250);
         }
 
+        function closeBuySplits(exceptId) {
+            document.querySelectorAll(".buy-split.open").forEach(function(box) {
+                if (exceptId && box.getAttribute("data-product-id") === String(exceptId)) return;
+                box.classList.remove("open");
+            });
+        }
+
+        function toggleBuySplit(id, event) {
+            if (event) event.stopPropagation();
+            var box = document.querySelector('.buy-split[data-product-id="' + id + '"]');
+            if (!box) return;
+            var willOpen = !box.classList.contains("open");
+            closeBuySplits(id);
+            box.classList.toggle("open", willOpen);
+        }
+
         function renderProducts(filter) {
             var list = filter === "all" ? PRODUCTS : PRODUCTS.filter(function(p) {
                 return p.cat === filter;
@@ -394,7 +475,13 @@
                     '<div class="product-price">' + p.price + "</div>" +
                     tag +
                     "</div>" +
-                    '<button class="amazon-btn" onclick="goToAmazon(' + p.id + ')">Buy on Amazon/Flipkart</button>' +
+                    '<div class="buy-split" data-product-id="' + p.id + '">' +
+                    '<button type="button" class="amazon-btn buy-main-btn" onclick="toggleBuySplit(' + p.id + ', event)">Buy Now</button>' +
+                    '<div class="buy-options" aria-label="Buy options">' +
+                    '<button type="button" class="buy-option-btn amazon" onclick="goToMarket(' + p.id + ', \'amazon\', event)">Amazon</button>' +
+                    '<button type="button" class="buy-option-btn flipkart" onclick="goToMarket(' + p.id + ', \'flipkart\', event)">Flipkart</button>' +
+                    "</div>" +
+                    "</div>" +
                     "</div></div>";
             }
             document.getElementById("productsGrid").innerHTML = h;
@@ -1094,9 +1181,13 @@
                 else if (syncTarget === "slider") syncSlider(e.target.value);
 
                 var sanitizeTarget = e.target.getAttribute("data-sanitize");
-                if (sanitizeTarget === "claim-product") sanitizeClaimProduct(e.target);
+                if (sanitizeTarget === "name") sanitizeName(e.target);
+                else if (sanitizeTarget === "email") sanitizeEmail(e.target);
+                else if (sanitizeTarget === "phone") sanitizePhone(e.target);
+                else if (sanitizeTarget === "claim-product") sanitizeClaimProduct(e.target);
                 else if (sanitizeTarget === "order-id") sanitizeOrderId(e.target);
                 else if (sanitizeTarget === "claim-amount") sanitizeClaimAmount(e.target);
+                if (sanitizeTarget) e.target.classList.remove("invalid");
             });
 
             document.addEventListener("change", function(e) {
@@ -1134,6 +1225,10 @@
 
         // ===== INIT =====
         bindStaticUiEvents();
+
+        document.addEventListener("click", function(e) {
+            if (!e.target.closest(".buy-split")) closeBuySplits();
+        });
 
         renderProducts("all");
         renderTxTable("txTableBody");
